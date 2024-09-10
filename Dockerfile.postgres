@@ -1,0 +1,15 @@
+FROM postgres:bookworm as postgres
+
+FROM ruby:bookworm
+
+# Copy PostgreSQL binaries and libraries
+COPY --from=postgres /usr/lib/postgresql /usr/lib/postgresql
+COPY --from=postgres /usr/share/postgresql /usr/share/postgresql
+COPY --from=postgres /usr/lib/postgresql/16/bin/postgres /usr/bin/postgres
+
+RUN apt-get update && apt-get install -y postgresql-client
+
+# Test PostgreSQL
+RUN postgres --version
+
+CMD ["/bin/bash"]
