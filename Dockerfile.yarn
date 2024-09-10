@@ -1,23 +1,24 @@
 # Stage 1: Node.js
 FROM node:bookworm as node
 
-# Stage 2: Ruby with Node.js
+# Stage 2: Ruby with Node.js and correct Yarn version
 FROM ruby:bookworm
 
-# Copy Node.js and Yarn from the node image
+# Copy Node.js from the node image
 COPY --from=node /usr/local/bin/node /usr/local/bin/
 COPY --from=node /usr/local/lib/node_modules /usr/local/lib/node_modules
-COPY --from=node /opt/yarn-* /opt/yarn
-RUN ln -s /opt/yarn/bin/yarn /usr/local/bin/yarn && \
-    ln -s /opt/yarn/bin/yarnpkg /usr/local/bin/yarnpkg
+
+# Install correct Yarn version
+ENV YARN_VERSION 4.2.2
+RUN curl -fsSL --compressed "https://github.com/yarnpkg/yarn/releases/download/v${YARN_VERSION}/yarn-${YARN_VERSION}.tgz" \
+    | tar -xzC /opt \
+    && ln -snf /opt/yarn-v${YARN_VERSION}/bin/yarn /usr/local/bin/yarn \
+    && ln -snf /opt/yarn-v${YARN_VERSION}/bin/yarnpkg /usr/local/bin/yarnpkg
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
     graphviz \
     && rm -rf /var/lib/apt/lists/*
-
-# https://stackoverflow.com/questions/73125779/how-to-upgrade-the-version-of-yarn-on-nodelatest-docker-image
-RUN yarn set version stable
 
 # Set up the working directory
 WORKDIR /app
