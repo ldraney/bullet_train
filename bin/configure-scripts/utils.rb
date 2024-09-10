@@ -58,3 +58,14 @@ def announce_section(section_name)
   puts section_name.cyan
   puts ""
 end
+
+def ask(question)
+  if ARGV.include?('-y') || ENV['AUTO_CONFIRM'] == 'true'
+    puts "#{question} (Auto-confirmed: yes)"
+    return 'y'
+  end
+  
+  print "#{question} "
+  response = gets
+  response ? response.strip : ''
+end

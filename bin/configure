@@ -1,4 +1,11 @@
 #!/usr/bin/env ruby
+require 'optparse'
+
+OptionParser.new do |opts|
+  opts.on('-y', '--yes', 'Auto-confirm all prompts') do
+    ARGV << '-y'
+  end
+end.parse!
 
 # First we require a util file that will install a few utility gems
 # and define some utility methods used by other scirpts.

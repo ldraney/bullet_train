@@ -1,6 +1,16 @@
 #!/usr/bin/env ruby
 
 require "#{__dir__}/utils"
+require 'optparse'
+
+# Parse command line options
+OptionParser.new do |opts|
+  opts.on('-y', '--yes', 'Auto-confirm all prompts') do
+    ARGV << '-y'
+  end
+end.parse!
+
+# Rest of the file remains the same
 
 announce_section "Checking Ruby"
 
