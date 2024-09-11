@@ -39,7 +39,8 @@ RUN yarn set version stable
 WORKDIR /app
 
 # Copy application files
-COPY . /app
+# Copy only the Gemfile and Gemfile.lock
+COPY Gemfile Gemfile.lock .ruby-version ./
 
 # Update Ruby and Bundler
 RUN gem update --system && \
@@ -57,6 +58,13 @@ RUN node --version && \
 ENV RAILS_ENV=development
 ENV DISABLE_SPRING=1
 ENV DISABLE_BOOTSNAP=1
+
+# Install system dependencies
+# COPY . /ap# In the section where we install system dependencies, add libvips
+RUN apt-get update && apt-get install -y \
+    graphviz \
+    postgresql-client \
+    libvips
 
 # Set the entrypoint
 ENTRYPOINT ["/bin/bash", "-c"]
