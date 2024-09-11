@@ -8,19 +8,27 @@ gemfile do
   gem "activesupport", require: "active_support"
 end
 
+def running_in_docker?
+  File.exist?('/.dockerenv')
+end
+
 def ask(string)
   puts string.blue
   gets.strip
 end
 
-def ask_boolean(question, default = "y")
-  choices = (default.downcase[0] == "y") ? "[Y/n]" : "[y/N]"
-  puts "#{question} #{choices}".blue
-  answer = gets.strip.downcase[0]
-  if !answer
-    answer = default.downcase
+
+def ask_boolean(question, default = true)
+  if running_in_docker?
+    return default
   end
-  answer == "y"
+  print "#{question} [#{default ? 'Y/n' : 'y/N'}] "
+  answer = gets.strip.downcase[0]
+  if answer.nil?
+    default
+  else
+    answer == 'y'
+  end
 end
 
 def stream(command, prefix = "  ")

@@ -1,0 +1,18 @@
+# Stage 1: Redis
+FROM redis:bookworm as redis
+
+# Stage 2: Ruby with Redis
+FROM ruby:bookworm
+
+# Copy Redis binaries (adjust paths as necessary based on your findings)
+COPY --from=redis /usr/local/bin/redis-server /usr/local/bin/
+COPY --from=redis /usr/local/bin/redis-cli /usr/local/bin/
+
+# Verify Redis installation
+RUN redis-server --version && redis-cli --version
+
+# Set the entrypoint
+ENTRYPOINT ["/bin/bash", "-c"]
+
+# Default command (can be overridden at runtime)
+CMD ["redis-server"]

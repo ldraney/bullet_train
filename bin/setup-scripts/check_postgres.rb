@@ -4,6 +4,14 @@ require "#{__dir__}/utils"
 
 announce_section "Checking PostgreSQL"
 
+if running_in_docker?
+  puts "Docker environment detected. Proceeding without PostgreSQL version check."
+else
+  unless ask_boolean("You have PostgreSQL installed, but you're using v#{postgres_version} and not v14.\nTry proceeding without PostgreSQL 14?", true)
+    exit 1
+  end
+end
+
 postgres_version_info = begin
   `postgres --version`
 rescue
