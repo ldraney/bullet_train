@@ -2,7 +2,7 @@
 FROM node:bookworm as node
 
 # Stage 2: PostgreSQL
-FROM postgres:bookworm as postgres
+# FROM postgres:bookworm as postgres
 
 # Stage 3: Redis
 FROM redis:bookworm as redis
@@ -18,9 +18,9 @@ RUN ln -s /opt/yarn/bin/yarn /usr/local/bin/yarn && \
     ln -s /opt/yarn/bin/yarnpkg /usr/local/bin/yarnpkg
 
 # Copy PostgreSQL binaries and libraries
-COPY --from=postgres /usr/lib/postgresql /usr/lib/postgresql
-COPY --from=postgres /usr/share/postgresql /usr/share/postgresql
-COPY --from=postgres /usr/lib/postgresql/16/bin/postgres /usr/bin/postgres
+# COPY --from=postgres /usr/lib/postgresql /usr/lib/postgresql
+# COPY --from=postgres /usr/share/postgresql /usr/share/postgresql
+# COPY --from=postgres /usr/lib/postgresql/16/bin/postgres /usr/bin/postgres
 
 # Copy Redis binaries
 COPY --from=redis /usr/local/bin/redis-server /usr/local/bin/
@@ -52,7 +52,6 @@ RUN bundle update --bundler && bundle install
 # Verify installations
 RUN node --version && \
     yarn --version && \
-    postgres --version && \
     redis-server --version
 
 ENV RAILS_ENV=development
